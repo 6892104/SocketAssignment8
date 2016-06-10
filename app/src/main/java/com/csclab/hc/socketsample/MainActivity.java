@@ -1,7 +1,10 @@
 package com.csclab.hc.socketsample;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +41,30 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
     double num1 = 0; // Store input num 1
     double num2 = 0; // Store input num 2
     double result = 0; // Store result after calculating
+
+    public static final int MEG_INVALIDATE = 9527;
+
+    Handler handler = new Handler()
+    {
+
+        public void handleMessage(Message msg)
+        {
+            switch (msg.what)
+            {
+                // 當收到的Message的代號為我們剛剛訂的代號就做下面的動作。
+                case MEG_INVALIDATE:
+                    // 重繪UI
+                    if (textResult != null) {
+                        //TODO: Set the result text
+                        textResult.setText(new String(num1 + " " + oper + " " + num2 + " = " + result));
+                    }
+                    break;
+
+            }
+            super.handleMessage(msg);
+        }
+
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +152,7 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
         jumpToResultLayout(new String(num1 + " " + oper + " " + num2 + " = " + result));
 
         Log.d("Client", "Client Send");
-        Thread t = new thread();
+        Thread t = new thread(this);
         t.start();
     }
 
@@ -161,7 +188,19 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
         }
     }
 
+    public void setAnswer(double ans){
+        if (textResult != null) {
+            //TODO: Set the result text
+            textResult.setText(new String(num1 + " " + oper + " " + num2 + " = " + result));
+        }
+    }
+
     class thread extends Thread{
+        MainActivity parent;
+        public thread(MainActivity parent){
+            super();
+            this.parent = parent;
+        }
         public void run(){
             try{
                 System.out.println("Client: Waiting to connect...");
@@ -203,10 +242,11 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
                 result = Double.parseDouble(s);
                 System.out.println("double  = " + result);
 
-                /*if (textResult != null) {
-                    //TODO: Set the result text
-                    textResult.setText(new String(num1 + " " + oper + " " + num2 + " = " + result));
-                }*/
+                Message m = new Message();
+                // 定義 Message的代號，handler才知道這個號碼是不是自己該處理的。
+                m.what = MEG_INVALIDATE;
+                handler.sendMessage(m);
+
             }catch (Exception e){
                 System.out.println("Error : " + e.getMessage());
             }
