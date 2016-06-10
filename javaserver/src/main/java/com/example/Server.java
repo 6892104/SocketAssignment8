@@ -61,38 +61,32 @@ public class Server implements Runnable{
                 length = in.read(b);
                 s = new String(b);
                 System.out.println("[Server Said] s = " + s);
-                String oper = s;
-                System.out.println("[Server Said] oper = " + s);
+                String oper = s.substring(0,1);
+                System.out.println("[Server Said] oper = " + oper + " equal " + oper.equals("*"));
                 length = in.read(b);
                 s = new String(b);
                 double num2 = Double.parseDouble(s);
                 System.out.println("[Server Said] num2 = " + s);
 
                 double result = 0;
-                switch (oper) {
-                    case "+":
-                        result = num1 + num2;
-                        break;
-                    case "-":
-                        result = num1 - num2;
-                        break;
-                    case "*":
-                        result = num1 * num2;
-                        break;
-                    case "/":
-                        result = num1 / num2;
-                        break;
-                    default:
-                        break;
-                }
+                if(oper.equals("+"))
+                    result = num1 + num2;
+                else if(oper.equals("-"))
+                    result = num1 - num2;
+                else if(oper.equals("*"))
+                    result = num1 * num2;
+                else if(oper.equals("/"))
+                    result = num1 / num2;
 
-                System.out.println("[Server Said] ans =" + String.valueOf(result));
+                System.out.println("[Server Said] ans =" + result);
 
                 OutputStream out = clntSock.getOutputStream();
                 String strToSend;
 
                 byte[] sendStrByte = new byte[1024];
                 strToSend = String.valueOf(result);
+                System.out.println("[Server send] ans =" + strToSend);
+                System.out.println("[Server send] legnth =" + strToSend.length());
                 System.arraycopy(strToSend.getBytes(), 0, sendStrByte, 0, strToSend.length());
                 out.write(sendStrByte);
                 out.flush();

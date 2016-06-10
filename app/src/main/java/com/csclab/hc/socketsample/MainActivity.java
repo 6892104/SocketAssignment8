@@ -98,31 +98,31 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 
         // defines the button that has been clicked and performs the corresponding operation
         // write operation into oper, we will use it later for output
-        /*//TODO: caculate result
+        //TODO: caculate result
         switch (v.getId()) {
             case R.id.btnAdd:
                 oper = "+";
-                result = num1 + num2;
+                //result = num1 + num2;
                 break;
             case R.id.btnSub:
                 oper = "-";
-                result = num1 - num2;
+                //result = num1 - num2;
                 break;
             case R.id.btnMult:
                 oper = "*";
-                result = num1 * num2;
+                //result = num1 * num2;
                 break;
             case R.id.btnDiv:
                 oper = "/";
-                result = num1 / num2;
+                //result = num1 / num2;
                 break;
             default:
                 break;
-        }*/
+        }
         // HINT:Using log.d to check your answer is correct before implement page turning
         Log.d("debug", "ANS " + result);
         //TODO: Pass the result String to jumpToResultLayout() and show the result at Result view
-        //jumpToResultLayout(new String(num1 + " " + oper + " " + num2 + " = " + result));
+        jumpToResultLayout(new String(num1 + " " + oper + " " + num2 + " = " + result));
 
         Log.d("Client", "Client Send");
         Thread t = new thread();
@@ -173,22 +173,22 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 
                 // Create stream communicate with server
                 OutputStream out = socket.getOutputStream();
-                String strToSend = "Hi I'm client";
 
                 byte[] sendStrByte = new byte[1024];
-                strToSend = String.valueOf(num1);
-                System.arraycopy(strToSend.getBytes(), 0, sendStrByte, 0, strToSend.length());
+                String num1ToSend = String.valueOf(num1);
+                System.arraycopy(num1ToSend.getBytes(), 0, sendStrByte, 0, num1ToSend.length());
                 System.out.println("send num1!");
                 out.write(sendStrByte);
                 out.flush();
                 System.out.println("end num1!");
-                strToSend = oper;
-                System.out.println(oper + "; oper = " + strToSend);
-                System.arraycopy(strToSend.getBytes(), 0, sendStrByte, 0, strToSend.length());
+                sendStrByte = new byte[1024];
+                System.out.println("oper = " + oper + " length = " + oper.length());
+                System.arraycopy(oper.getBytes(), 0, sendStrByte, 0, oper.length());
                 out.write(sendStrByte);
                 out.flush();
-                strToSend = String.valueOf(num2);
-                System.arraycopy(strToSend.getBytes(), 0, sendStrByte, 0, strToSend.length());
+                sendStrByte = new byte[1024];
+                String num2ToSend = String.valueOf(num2);
+                System.arraycopy(num2ToSend.getBytes(), 0, sendStrByte, 0, num2ToSend.length());
                 out.write(sendStrByte);
                 out.flush();
 
@@ -201,10 +201,14 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
                 String s = new String(b);
                 System.out.println("[Server return]" + s);
                 result = Double.parseDouble(s);
+                System.out.println("double  = " + result);
 
-                jumpToResultLayout(new String(num1 + " " + oper + " " + num2 + " = " + result));
+                /*if (textResult != null) {
+                    //TODO: Set the result text
+                    textResult.setText(new String(num1 + " " + oper + " " + num2 + " = " + result));
+                }*/
             }catch (Exception e){
-                System.out.println("Error" + e.getMessage());
+                System.out.println("Error : " + e.getMessage());
             }
         }
     }
